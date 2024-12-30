@@ -13,7 +13,7 @@ This is a personal project written in Go to learn more about the file and I/O sy
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/todo-cli-manager.git
+    git clone https://github.com/kbbansi/learning-go.git
     ```
 2. Navigate to the project directory:
     ```sh
