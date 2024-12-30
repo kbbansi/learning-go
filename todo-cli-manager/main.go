@@ -21,7 +21,16 @@ func main() {
 
 	// CLI commands
 	addCommand := flag.NewFlagSet("add", flag.ExitOnError)
+	addCommand.Usage = func() {
+		fmt.Println("Info: Add a new TODO List Item\nUsage: todo-cli-manager add <task>")
+		addCommand.PrintDefaults()
+	}
+
 	listCommand := flag.NewFlagSet("list", flag.ExitOnError)
+	listCommand.Usage = func() {
+		fmt.Println("Usage: todo-cli-manager list")
+		addCommand.PrintDefaults()
+	}
 
 	// check the command
 	if len(os.Args) < 2 {
