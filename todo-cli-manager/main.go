@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 // Task struct representing a single todo item
@@ -29,12 +30,24 @@ func main() {
 	listCommand := flag.NewFlagSet("list", flag.ExitOnError)
 	listCommand.Usage = func() {
 		fmt.Println("Usage: todo-cli-manager list")
-		addCommand.PrintDefaults()
+		listCommand.PrintDefaults()
+	}
+
+	deleteCommand := flag.NewFlagSet("delete", flag.ExitOnError)
+	deleteCommand.Usage = func() {
+		fmt.Println("Info: Delete a TODO List Item\nUsage: todo-cli-manager delete <task>")
+		deleteCommand.PrintDefaults()
+	}
+
+	doneCommand := flag.NewFlagSet("done", flag.ExitOnError)
+	doneCommand.Usage = func() {
+		fmt.Println("Info: Mark a TODO List Item as Done\nUsage: todo-cli-manager done <task>")
+		doneCommand.PrintDefaults()
 	}
 
 	// check the command
 	if len(os.Args) < 2 {
-		fmt.Println("expected 'add' or 'list' subcommands")
+		fmt.Println("expected 'add', 'list', 'delete', or 'done' subcommands")
 		os.Exit(1)
 	}
 
@@ -45,8 +58,14 @@ func main() {
 	case "list":
 		listCommand.Parse(os.Args[2:])
 		listTasks()
+	case "delete":
+		deleteCommand.Parse(os.Args[2:])
+		deleteTask()
+	case "done":
+		doneCommand.Parse(os.Args[2:])
+		markTaskAsDone()
 	default:
-		fmt.Println("expected 'add' or 'list' subcommands")
+		fmt.Println("expected 'add', 'list', 'delete', or 'done' subcommands")
 		os.Exit(1)
 	}
 
@@ -131,10 +150,109 @@ func listTasks() {
 	}
 
 	for _, task := range tasks {
-		status := "Pending"
+		status := " "
 		if task.Done {
-			status = "Done"
+			status = "👍🏾"
 		}
-		fmt.Printf("%d. %s [%s]\n", task.ID, task.Text, status)
+		fmt.Printf("%d. [%s] %s\n", task.ID, status, task.Text)
 	}
+}
+
+func deleteTask() {
+	// Get the task from CLI arguments
+	fmt.Println("Deleting task")
+
+	if len(os.Args) < 3 {
+		fmt.Println("No task specified\nUsage: todo-cli-manager delete <task>")
+		os.Exit(1)
+	}
+
+	taskID := os.Args[2]
+	id, err := strconv.Atoi(taskID)
+	if err != nil {
+		fmt.Println("Invalid task ID: ", taskID)
+		os.Exit(1)
+	}
+
+	tasks := loadTasks()
+	if err != nil {
+		fmt.Println("Error loading tasks: ", err)
+		os.Exit(1)
+	}
+
+	// find the task
+	updatedTasks := Tasks{}
+	found := false
+
+	for _, task := range tasks {
+		if task.ID == id {
+			found = true
+			continue
+		} else {
+			updatedTasks = append(updatedTasks, task)
+		}
+	}
+
+	if !found {
+		fmt.Println("Task not found: ", taskID)
+		os.Exit(1)
+	}
+
+	// save the updated tasks
+	saveTasks(updatedTasks)
+	if err != nil {
+		fmt.Println("Error saving tasks: ", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Task deleted successfully: ", taskID)
+}
+
+func markTaskAsDone() {
+	// Get the task from CLI arguments
+	fmt.Println("Marking task as done")
+
+	if len(os.Args) < 3 {
+		fmt.Println("No task specified\nUsage: todo-cli-manager done <task>")
+		os.Exit(1)
+	}
+
+	taskID := os.Args[2]
+	id, err := strconv.Atoi(taskID)
+	if err != nil {
+		fmt.Println("Invalid task ID: ", taskID)
+		os.Exit(1)
+	}
+
+	tasks := loadTasks()
+	if err != nil {
+		fmt.Println("Error loading tasks: ", err)
+		os.Exit(1)
+	}
+
+	// find the task
+	updatedTasks := Tasks{}
+	found := false
+
+	for _, task := range tasks {
+		if task.ID == id {
+			found = true
+			task.Done = true
+		}
+		updatedTasks = append(updatedTasks, task)
+	}
+
+	if !found {
+		fmt.Println("Task not found: ", taskID)
+		os.Exit(1)
+	}
+
+	// save the updated tasks
+	saveTasks(updatedTasks)
+	if err != nil {
+		fmt.Println("Error saving tasks: ", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Task marked as done successfully: ", taskID)
 }
