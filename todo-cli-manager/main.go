@@ -187,7 +187,7 @@ func deleteTask() {
 	for _, task := range tasks {
 		if task.ID == id {
 			found = true
-			//continue
+			continue
 		} else {
 			updatedTasks = append(updatedTasks, task)
 		}
