@@ -38,7 +38,7 @@ This is a personal project written in Go to learn more about the file and I/O sy
 
 ### Mark a todo item as completed
 ```sh
-./todo-cli-manager complete 1
+./todo-cli-manager done 1
 ```
 
 ### Delete a todo item
