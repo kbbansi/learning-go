@@ -11,8 +11,6 @@ type ListCommand struct {
 }
 
 func (c *ListCommand) Execute() error {
-	c.File.FilePath = "../tasks.json"
-
 	tasks, err := c.Repo.LoadTask()
 	if err != nil {
 		return err

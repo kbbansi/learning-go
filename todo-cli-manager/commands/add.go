@@ -13,7 +13,6 @@ type AddCommand struct {
 }
 
 func (c *AddCommand) Execute() error {
-	c.File.FilePath = "../tasks.json"
 	tasks, err := c.Repo.LoadTask()
 	if err != nil {
 		return err
