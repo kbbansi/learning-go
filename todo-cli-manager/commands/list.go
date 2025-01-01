@@ -7,7 +7,6 @@ import (
 
 type ListCommand struct {
 	Repo repository.TaskRepository
-	File repository.FileTaskRepository
 }
 
 func (c *ListCommand) Execute() error {

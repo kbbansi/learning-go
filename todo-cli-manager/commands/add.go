@@ -9,7 +9,6 @@ import (
 type AddCommand struct {
 	Repo repository.TaskRepository
 	Text string
-	File repository.FileTaskRepository
 }
 
 func (c *AddCommand) Execute() error {
